@@ -37,7 +37,7 @@ func main() {
 	kingpin.Parse()
 	fmt.Printf("Loading %s\n", *words)
 	f, err := os.Open(*words)
-	errorIfNotNil(err)
+	panicIfNotNil(err)
 	defer f.Close()
 	r := bufio.NewReader(f)
 	line, err := r.ReadString('\n')
@@ -57,9 +57,14 @@ func process(line string) {
 	}
 }
 
-func errorIfNotNil(err error) {
+func panicIfNotNil(err error) {
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		panic(err)
+	}
+}
+
+func panicIfFalse(expr bool, msg string) {
+	if !expr {
+		panic(msg)
 	}
 }

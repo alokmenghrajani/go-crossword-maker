@@ -1,7 +1,7 @@
 package main
 
 import (
-	//	"fmt"
+	"fmt"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -29,6 +29,9 @@ func TestPlace(t *testing.T) {
 	assert.True(t, g.Place(2, 0, DOWN, "sam"))
 	s = g.String()
 	assert.Equal(t, s, " .  #  s  # \n . (f)(a)(b)\n d  o  m  e \n .  o  #  # \n")
+
+	fmt.Println(g)
+	fmt.Printf("here: %s", g.rightPartial)	
 
 	assert.True(t, g.Place(1, 1, RIGHT, "fab"))
 	s = g.String()
