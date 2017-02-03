@@ -1,11 +1,7 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
-	"io"
-	"os"
-	"strings"
 
 	"gopkg.in/alecthomas/kingpin.v2"
 )
@@ -28,7 +24,7 @@ import (
  */
 
 var (
-	words = kingpin.Flag("words", "File to read word list from.").Short('w').Default("words.txt").String()
+	words = kingpin.Flag("words", "File to read word list from.").Short('w').Required().String()
 	size  = kingpin.Flag("size", "Grid size.").Short('s').Required().Int()
 )
 
@@ -36,25 +32,9 @@ func main() {
 	kingpin.Version("0.0.1")
 	kingpin.Parse()
 	fmt.Printf("Loading %s\n", *words)
-	f, err := os.Open(*words)
-	panicIfNotNil(err)
-	defer f.Close()
-	r := bufio.NewReader(f)
-	line, err := r.ReadString('\n')
-	for err != io.EOF {
-		fmt.Print(line)
-		process(line)
-		line, err = r.ReadString('\n')
-	}
-}
-
-func process(line string) {
-	line = strings.TrimRight(line, "\n")
-	for i := 0; i < len(line); i++ {
-		for j := i + 1; j < len(line); j++ {
-			fmt.Printf("here: %s\n", line[i:j])
-		}
-	}
+	words := Load(*words)
+	grid := New(*size)
+	fmt.Println("...", words, grid)
 }
 
 func panicIfNotNil(err error) {
