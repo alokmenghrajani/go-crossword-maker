@@ -5,6 +5,19 @@ from a list of words.
 
 This code is currently work in progress. You can run `go test -v .` and that's about it.
 
+# building and running tests
+To run the tests
+```
+go test -v ./grid ./words ./generate .
+```
+
+To run the code
+(TODO: godep piece)
+```
+go build
+./go-crossword-maker --wordlist ukacd.txt --size 4
+```
+
 # motivation for writing this in Go
 I need a crossword maker which will perform reasonably well with a small wordlist. I'm building
 a crossword with a very specific theme. It's a hard problem to solve manually and I found a

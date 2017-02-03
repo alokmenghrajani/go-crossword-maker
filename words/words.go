@@ -1,4 +1,4 @@
-package main
+package words
 
 import (
 	"bufio"
@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 	"strings"
+  . "../utils"
 )
 
 /**
@@ -29,7 +30,7 @@ func Load(filename string) *Words {
 	w.ngrams = make(map[string][]string)
 
 	f, err := os.Open(filename)
-	panicIfNotNil(err)
+	PanicIfNotNil(err)
 	defer f.Close()
 	r := bufio.NewReader(f)
 	inHeader := true
@@ -38,7 +39,7 @@ func Load(filename string) *Words {
 		if err == io.EOF {
 			break
 		}
-		panicIfNotNil(err)
+		PanicIfNotNil(err)
 		if strings.HasPrefix(line, "--------") {
 			inHeader = false
 		} else if !inHeader {
@@ -65,11 +66,11 @@ func (words *Words) addWord(word string) {
 }
 
 func (words *Words) markUsed(word string) {
-	panicIfFalse(!words.words[word], fmt.Sprintf("expecting %s to be false", word))
+	PanicIfFalse(!words.words[word], fmt.Sprintf("expecting %s to be false", word))
 	words.words[word] = true
 }
 
 func (words *Words) markUnused(word string) {
-	panicIfFalse(words.words[word], fmt.Sprintf("expecting %s to be true", word))
+	PanicIfFalse(words.words[word], fmt.Sprintf("expecting %s to be true", word))
 	words.words[word] = false
 }

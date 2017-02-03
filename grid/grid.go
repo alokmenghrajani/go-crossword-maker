@@ -1,4 +1,4 @@
-package main
+package grid
 
 import (
 	"fmt"
@@ -61,9 +61,7 @@ type Grid struct {
 }
 
 func New(size int) *Grid {
-	g := new(Grid)
-	g.size = size
-	g.grid = make([][]cell, size)
+	g := &Grid{size, make([][]cell, size)}
 	for i := 0; i < size; i++ {
 		g.grid[i] = make([]cell, size)
 		for j := 0; j < size; j++ {

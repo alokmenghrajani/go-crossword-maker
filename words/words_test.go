@@ -1,4 +1,4 @@
-package main
+package words
 
 import (
 	"github.com/stretchr/testify/assert"
@@ -6,7 +6,7 @@ import (
 )
 
 func TestLoad(t *testing.T) {
-	w := Load("test_wordlist.txt")
+	w := Load("../test_wordlist.txt")
 	assert.Equal(t, len(w.words), 4)
 
 	ngrams := w.ngrams["wo"]
