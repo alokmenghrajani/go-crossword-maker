@@ -31,14 +31,14 @@ func (c emptyCell) String() string {
 }
 
 type charCell struct {
-	char      byte
-	isDown    bool
-	isRight   bool
+	char    byte
+	isDown  bool
+	isRight bool
 }
 
 func (c charCell) isCell() {}
 func (c charCell) String() string {
-	r := fmt.Sprintf(" %c", c.char);
+	r := fmt.Sprintf(" %c", c.char)
 	if c.isDown && !c.isRight {
 		r += "|"
 	} else if !c.isDown && c.isRight {
