@@ -12,7 +12,6 @@ go test -v ./grid ./words ./generate .
 ```
 
 To run the code
-(TODO: godep piece)
 ```
 go build
 ./go-crossword-maker --wordlist ukacd.txt --size 4

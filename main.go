@@ -14,6 +14,9 @@ import (
  * We then search for the best placement of words; continuously printing better solutions to stdout.
  * TODO: add a flag to create symmetric grids.
  * TODO: add the ability to start from a specific grid.
+ * TODO: setup godep + update README
+ * TODO: setup travis
+ * TODO: support non-square grids?
  */
 
 var (
