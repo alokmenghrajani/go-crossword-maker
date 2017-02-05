@@ -1,8 +1,8 @@
 package grid
 
 import (
-	"fmt"
 	. "../utils"
+	"fmt"
 )
 
 type dir int
@@ -185,7 +185,7 @@ func (g *Grid) placeRight(x, y int, word string) (startBlack bool, endBlack bool
 		g.grid[x-1][y] = blackCell{}
 	}
 	if g.isValid(x+len(word), y) {
-		endBlack = true		
+		endBlack = true
 		g.grid[x+len(word)][y] = blackCell{}
 	}
 	for i := 0; i < len(word); i++ {

@@ -1,12 +1,12 @@
 package words
 
 import (
+	. "../utils"
 	"bufio"
 	"fmt"
 	"io"
 	"os"
 	"strings"
-  . "../utils"
 )
 
 /**
@@ -19,8 +19,8 @@ import (
  *       one was picked. Helps when creating crosswords with specific themes.
  */
 type Words struct {
-	words []string
-	used map[string]bool	
+	words  []string
+	used   map[string]bool
 	ngrams map[string][]string
 }
 
@@ -49,7 +49,7 @@ func Load(filename string) *Words {
 
 func (words *Words) addWord(word string) {
 	word = strings.TrimRight(word, "\n")
-  words.words = append(words.words, word)
+	words.words = append(words.words, word)
 	words.used[word] = false
 
 	for i := 0; i < len(word); i++ {
@@ -65,7 +65,7 @@ func (words *Words) addWord(word string) {
 }
 
 func (words *Words) GetWords() []string {
-  return words.words
+	return words.words
 }
 
 func (words *Words) IsUsed(word string) bool {

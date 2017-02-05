@@ -1,10 +1,10 @@
 package main
 
 import (
-	"fmt"
+	"./generate"
 	"./grid"
 	"./words"
-	"./generate"
+	"fmt"
 
 	"gopkg.in/alecthomas/kingpin.v2"
 )
@@ -21,7 +21,7 @@ import (
 
 var (
 	wordlist = kingpin.Flag("wordlist", "File to read word list from.").Short('w').Required().String()
-	size  = kingpin.Flag("size", "Grid size.").Short('s').Required().Int()
+	size     = kingpin.Flag("size", "Grid size.").Short('s').Required().Int()
 )
 
 func main() {
