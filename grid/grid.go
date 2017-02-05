@@ -181,9 +181,11 @@ func (g *Grid) placeRight(x, y int, word string) (startBlack bool, endBlack bool
 		}
 	}
 	if g.isValid(x-1, y) {
+		startBlack = true
 		g.grid[x-1][y] = blackCell{}
 	}
 	if g.isValid(x+len(word), y) {
+		endBlack = true		
 		g.grid[x+len(word)][y] = blackCell{}
 	}
 	for i := 0; i < len(word); i++ {
