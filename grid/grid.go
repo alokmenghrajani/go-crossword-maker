@@ -267,6 +267,54 @@ func (g *Grid) unplaceRight(x, y int, word string, startBlack bool, endBlack boo
 	}
 }
 
+func (g *Grid) PartialDown() []string {
+	r := []string{}
+	for i := 0; i < g.Size; i++ {
+		partial := ""
+		for j := 0; j < g.Size; j++ {
+			if t, ok := g.grid[i][j].(charCell); ok {
+				if !t.isDown {
+					PanicIfFalse(t.isRight, "either isDown or isRight should be set")
+					partial += fmt.Sprintf("%c", t.char)
+				} else {
+					if len(partial) > 1 {
+						r = append(r, partial)
+						partial = ""
+					}
+				}
+			}
+		}
+		if len(partial) > 1 {
+			r = append(r, partial)
+		}
+	}
+	return r
+}
+
+func (g *Grid) PartialRight() []string {
+	r := []string{}
+	for j := 0; j < g.Size; j++ {
+		partial := ""
+		for i := 0; i < g.Size; i++ {
+			if t, ok := g.grid[i][j].(charCell); ok {
+				if !t.isRight {
+					PanicIfFalse(t.isDown, "either isDown or isRight should be set")
+					partial += fmt.Sprintf("%c", t.char)
+				} else {
+					if len(partial) > 1 {
+						r = append(r, partial)
+						partial = ""
+					}
+				}
+			}
+		}
+		if len(partial) > 1 {
+			r = append(r, partial)
+		}
+	}
+	return r
+}
+
 func (g *Grid) String() string {
 	s := ""
 	for j := 0; j < g.Size; j++ {

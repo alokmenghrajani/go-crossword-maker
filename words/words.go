@@ -19,8 +19,8 @@ import (
  *       one was picked. Helps when creating crosswords with specific themes.
  */
 type Words struct {
-	words  []string
-  used map[string]bool
+	words []string
+	used map[string]bool	
 	ngrams map[string][]string
 }
 
@@ -66,6 +66,10 @@ func (words *Words) addWord(word string) {
 
 func (words *Words) GetWords() []string {
   return words.words
+}
+
+func (words *Words) IsUsed(word string) bool {
+	return words.used[word]
 }
 
 func (words *Words) MarkUsed(word string) {
