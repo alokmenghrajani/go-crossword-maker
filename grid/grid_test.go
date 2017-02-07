@@ -56,7 +56,7 @@ func TestUnplace(t *testing.T) {
 
 	g.Unplace(2, 0, RIGHT, "go", a2, z2)
 	s = g.String()
-	assert.Equal(t, s, " .  .  .  . \n .  f| .  . \n .  o| .  . \n .  o| .  . \n")
+	assert.Equal(t, s, " .  #  .  . \n .  f| .  . \n .  o| .  . \n .  o| .  . \n")
 
 	g.Unplace(1, 1, DOWN, "foo", a1, z1)
 	s = g.String()
@@ -69,4 +69,13 @@ func TestUnplace2(t *testing.T) {
 	g.Unplace(1, 0, RIGHT, "foo", a1, z1)
 	s := g.String()
 	assert.Equal(t, s, " .  .  .  . \n .  .  .  . \n .  .  .  . \n .  .  .  . \n")
+}
+
+func TestUnplace3(t *testing.T) {
+	g := New(4)
+	g.Place(0, 1, DOWN, "foo")
+	a2, z2, _ := g.Place(1, 0, RIGHT, "bar")
+	g.Unplace(1, 0, RIGHT, "bar", a2, z2)
+	s := g.String()
+	assert.Equal(t, s, " #  .  .  . \n f| .  .  . \n o| .  .  . \n o| .  .  . \n")
 }

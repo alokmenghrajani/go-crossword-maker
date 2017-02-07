@@ -21,20 +21,20 @@ func phaseTwo(words *words.Words, g *grid.Grid, score int) bool {
 	// Find all the horizontal partial words
 	t := g.PartialDown()
 	if len(t) > 0 {
-    fmt.Println(g)
-    fmt.Printf("PartialDown: %s\n", t)
+		fmt.Println(g)
+		fmt.Printf("PartialDown: %s\n", t)
 		return false
 	}
 
 	t = g.PartialRight()
 	if len(t) > 0 {
-    fmt.Println(g)
-    fmt.Printf("PartialRight: %s\n", t)
+		fmt.Println(g)
+		fmt.Printf("PartialRight: %s\n", t)
 		return false
 	}
 
 	// grid is in good state!
-  fmt.Printf("score: %d\n", score)
+	fmt.Printf("score: %d\n", score)
 	fmt.Println(g)
 
 	return phaseOne(words, g, score)
@@ -53,7 +53,7 @@ func phaseOne(words *words.Words, g *grid.Grid, score int) bool {
 					fmt.Printf("placed '%s' at DOWN %d, %d\n", word, i, j)
 					words.MarkUsed(word)
 					// recurse
-					if phaseTwo(words, g, score + 1) {
+					if phaseTwo(words, g, score+1) {
 						return true
 					}
 					g.Unplace(i, j, grid.DOWN, word, a, z)
@@ -69,7 +69,7 @@ func phaseOne(words *words.Words, g *grid.Grid, score int) bool {
 					fmt.Printf("placed '%s' at RIGHT %d, %d\n", word, i, j)
 					words.MarkUsed(word)
 					// recurse
-					if phaseTwo(words, g, score + 1) {
+					if phaseTwo(words, g, score+1) {
 						return true
 					}
 					g.Unplace(i, j, grid.RIGHT, word, a, z)

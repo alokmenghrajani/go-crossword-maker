@@ -30,5 +30,6 @@ func main() {
 	fmt.Printf("Loading %s\n", *wordlist)
 	words := words.Load(*wordlist)
 	grid := grid.New(*size)
+	fmt.Println("Starting search")
 	generate.Generate(words, grid)
 }

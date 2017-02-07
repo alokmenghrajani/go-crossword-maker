@@ -95,6 +95,14 @@ func (g *Grid) isEmptyOrBlack(x, y int) bool {
 	return false
 }
 
+func (g *Grid) isEmpty(x, y int) bool {
+	if !g.isValid(x, y) {
+		return false
+	}
+	_, ok := g.grid[x][y].(emptyCell)
+	return ok
+}
+
 func (g *Grid) isEmptyOrLetter(x, y int, char byte) bool {
 	if !g.isValid(x, y) {
 		return false
@@ -140,11 +148,11 @@ func (g *Grid) placeDown(x, y int, word string) (startBlack bool, endBlack bool,
 			return
 		}
 	}
-	if g.isValid(x, y-1) {
+	if g.isEmpty(x, y-1) {
 		startBlack = true
 		g.grid[x][y-1] = blackCell{}
 	}
-	if g.isValid(x, y+len(word)) {
+	if g.isEmpty(x, y+len(word)) {
 		endBlack = true
 		g.grid[x][y+len(word)] = blackCell{}
 	}
@@ -180,11 +188,11 @@ func (g *Grid) placeRight(x, y int, word string) (startBlack bool, endBlack bool
 			return
 		}
 	}
-	if g.isValid(x-1, y) {
+	if g.isEmpty(x-1, y) {
 		startBlack = true
 		g.grid[x-1][y] = blackCell{}
 	}
-	if g.isValid(x+len(word), y) {
+	if g.isEmpty(x+len(word), y) {
 		endBlack = true
 		g.grid[x+len(word)][y] = blackCell{}
 	}
