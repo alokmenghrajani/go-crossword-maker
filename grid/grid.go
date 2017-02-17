@@ -61,6 +61,11 @@ type Grid struct {
 	grid [][]cell
 }
 
+type Partial struct {
+	partial string
+	x, y int
+}
+
 func New(size int) *Grid {
 	g := &Grid{size, make([][]cell, size)}
 	for i := 0; i < size; i++ {
@@ -277,8 +282,13 @@ func (g *Grid) unplaceRight(x, y int, word string, startBlack bool, endBlack boo
 	}
 }
 
-func (g *Grid) PartialDown() []string {
-	r := []string{}
+/**
+ * Returns a list of Partial, which is useful information to prune the
+ * search space.
+ */
+func (g *Grid) PartialDown() []Partial {
+	var r []Partial
+
 	for i := 0; i < g.Size; i++ {
 		partial := ""
 		for j := 0; j < g.Size; j++ {
@@ -288,20 +298,24 @@ func (g *Grid) PartialDown() []string {
 				partial += fmt.Sprintf("%c", t.char)
 			} else {
 				if len(partial) > 1 {
-					r = append(r, partial)
+					r = append(r, Partial{partial: partial, x: i, y: j - len(partial)})
 				}
 				partial = ""
 			}
 		}
 		if len(partial) > 1 {
-			r = append(r, partial)
+			r = append(r, Partial{partial: partial, x: i, y: g.Size - len(partial)})
 		}
 	}
 	return r
 }
 
-func (g *Grid) PartialRight() []string {
-	r := []string{}
+/**
+ * Same as PartialDown, but returns horizontal results.
+ */
+func (g *Grid) PartialRight() []Partial {
+	var r []Partial
+
 	for j := 0; j < g.Size; j++ {
 		partial := ""
 		for i := 0; i < g.Size; i++ {
@@ -311,13 +325,13 @@ func (g *Grid) PartialRight() []string {
 				partial += fmt.Sprintf("%c", t.char)
 			} else {
 				if len(partial) > 1 {
-					r = append(r, partial)
+					r = append(r, Partial{partial: partial, x: i - len(partial), y: j})
 				}
 				partial = ""
 			}
 		}
 		if len(partial) > 1 {
-			r = append(r, partial)
+			r = append(r, Partial{partial: partial, x: g.Size - len(partial), y: j})
 		}
 	}
 	return r

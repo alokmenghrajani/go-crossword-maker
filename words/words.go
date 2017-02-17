@@ -24,6 +24,11 @@ type Words struct {
 	ngrams map[string][]string
 }
 
+type Ngram struct {
+	word string
+	offset int
+}
+
 func Load(filename string) *Words {
 	w := &Words{[]string{}, make(map[string]bool), make(map[string][]string)}
 
