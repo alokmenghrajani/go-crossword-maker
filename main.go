@@ -10,6 +10,14 @@ import (
 )
 
 /**
+ Tasks:
+ - grid.go should track which words have been placed instead of generate.go
+ - is it worth improving the way words get removed? I.e. undo-stack?
+ - better scoring system. Right now, it's simply number of words placed in grid. should
+   favor intersections.
+ */
+
+/**
  * To generate a crossword, we start with a list of words.
  * We then search for the best placement of words; continuously printing better solutions to stdout.
  * TODO: add a flag to create symmetric grids.

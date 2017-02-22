@@ -21,7 +21,7 @@ import (
 type Words struct {
 	words  []string
 	used   map[string]bool
-	ngrams map[string][]string
+	ngrams map[string][]Ngram
 }
 
 type Ngram struct {
@@ -30,7 +30,7 @@ type Ngram struct {
 }
 
 func Load(filename string) *Words {
-	w := &Words{[]string{}, make(map[string]bool), make(map[string][]string)}
+	w := &Words{[]string{}, make(map[string]bool), make(map[string][]Ngram)}
 
 	f, err := os.Open(filename)
 	PanicIfNotNil(err)
@@ -59,11 +59,12 @@ func (words *Words) addWord(word string) {
 
 	for i := 0; i < len(word); i++ {
 		for j := i + 1; j < len(word); j++ {
-			ngram := word[i:j]
-			if l, ok := words.ngrams[ngram]; ok {
-				words.ngrams[ngram] = append(l, word)
+			t := word[i:j]
+			ngram := Ngram{word: word, offset: i}
+			if l, ok := words.ngrams[t]; ok {
+				words.ngrams[t] = append(l, ngram)
 			} else {
-				words.ngrams[ngram] = []string{word}
+				words.ngrams[t] = []Ngram{ngram}
 			}
 		}
 	}
