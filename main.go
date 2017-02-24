@@ -15,6 +15,8 @@ import (
  - is it worth improving the way words get removed? I.e. undo-stack?
  - better scoring system. Right now, it's simply number of words placed in grid. should
    favor intersections.
+ - finish implementing generate.phaseTwo
+ - setup travis
  */
 
 /**

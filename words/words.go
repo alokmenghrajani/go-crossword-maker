@@ -25,12 +25,12 @@ type Words struct {
 }
 
 type Ngram struct {
-	word string
-	offset int
+	Word   string
+	Offset int
 }
 
 func Load(filename string) *Words {
-	w := &Words{[]string{}, make(map[string]bool), make(map[string][]Ngram)}
+	w := New()
 
 	f, err := os.Open(filename)
 	PanicIfNotNil(err)
@@ -46,13 +46,17 @@ func Load(filename string) *Words {
 		if strings.HasPrefix(line, "--------") {
 			inHeader = false
 		} else if !inHeader {
-			w.addWord(line)
+			w.AddWord(line)
 		}
 	}
 	return w
 }
 
-func (words *Words) addWord(word string) {
+func New() *Words {
+	return &Words{[]string{}, make(map[string]bool), make(map[string][]Ngram)}
+}
+
+func (words *Words) AddWord(word string) {
 	word = strings.TrimRight(word, "\n")
 	words.words = append(words.words, word)
 	words.used[word] = false
@@ -60,7 +64,7 @@ func (words *Words) addWord(word string) {
 	for i := 0; i < len(word); i++ {
 		for j := i + 1; j < len(word); j++ {
 			t := word[i:j]
-			ngram := Ngram{word: word, offset: i}
+			ngram := Ngram{Word: word, Offset: i}
 			if l, ok := words.ngrams[t]; ok {
 				words.ngrams[t] = append(l, ngram)
 			} else {
@@ -72,6 +76,10 @@ func (words *Words) addWord(word string) {
 
 func (words *Words) GetWords() []string {
 	return words.words
+}
+
+func (words *Words) GetNgrams(partial string) []Ngram {
+	return words.ngrams[partial]
 }
 
 func (words *Words) IsUsed(word string) bool {

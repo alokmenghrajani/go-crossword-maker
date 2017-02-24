@@ -62,8 +62,8 @@ type Grid struct {
 }
 
 type Partial struct {
-	partial string
-	x, y int
+	Partial string
+	X, Y    int
 }
 
 func New(size int) *Grid {
@@ -298,13 +298,13 @@ func (g *Grid) PartialDown() []Partial {
 				partial += fmt.Sprintf("%c", t.char)
 			} else {
 				if len(partial) > 1 {
-					r = append(r, Partial{partial: partial, x: i, y: j - len(partial)})
+					r = append(r, Partial{Partial: partial, X: i, Y: j - len(partial)})
 				}
 				partial = ""
 			}
 		}
 		if len(partial) > 1 {
-			r = append(r, Partial{partial: partial, x: i, y: g.Size - len(partial)})
+			r = append(r, Partial{Partial: partial, X: i, Y: g.Size - len(partial)})
 		}
 	}
 	return r
@@ -325,13 +325,13 @@ func (g *Grid) PartialRight() []Partial {
 				partial += fmt.Sprintf("%c", t.char)
 			} else {
 				if len(partial) > 1 {
-					r = append(r, Partial{partial: partial, x: i - len(partial), y: j})
+					r = append(r, Partial{Partial: partial, X: i - len(partial), Y: j})
 				}
 				partial = ""
 			}
 		}
 		if len(partial) > 1 {
-			r = append(r, Partial{partial: partial, x: g.Size - len(partial), y: j})
+			r = append(r, Partial{Partial: partial, X: g.Size - len(partial), Y: j})
 		}
 	}
 	return r

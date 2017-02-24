@@ -13,23 +13,48 @@ func Generate(words *words.Words, grid *grid.Grid) {
 	// 1. place a random word in a random position
 	// 2. resolve any partial words until there are none left.
 	//    print the grid if it's a better grid or backtrack.
-  // 3. place words that intersect existing words
-  //    repeat step 2 or step 1.
-  //
-  // Note: step 2 should prune the search space. It does however
-  //       trigger the exploration of duplicate states.
+	// 3. place words that intersect existing words
+	//    repeat step 2 or step 1.
+	//
+	// Note: step 2 should prune the search space. It does however
+	//       trigger the exploration of duplicate states.
 	phaseOne(words, grid, 0)
 }
 
+// Checks that all the partial words can be solved.
+func phaseTwoValidateDown(words *words.Words, g *grid.Grid) map[grid.Partial]int {
+	r := make(map[grid.Partial]int)
+
+	// For each partial word, count how many words we can still place
+	for _, partial := range g.PartialDown() {
+		count := 0
+		ngrams := words.GetNgrams(partial.Partial)
+		for _, ngram := range ngrams {
+			if words.IsUsed(ngram.Word) {
+				continue
+			}
+			// try to place ngram.word at partial.x, partial.y - ngram.offset
+			sb, eb, ok := g.Place(partial.X, partial.Y-ngram.Offset, grid.DOWN, ngram.Word)
+			if ok {
+				count++
+				g.Unplace(partial.X, partial.Y-ngram.Offset, grid.DOWN, ngram.Word, sb, eb)
+			}
+		}
+		r[partial] = count
+	}
+	return r
+}
+
 func phaseTwo(words *words.Words, g *grid.Grid, score int) bool {
-	// Find all the horizontal partial words
-	t := g.PartialDown()
-	if len(t) > 0 {
-		//fmt.Printf("PartialDown: %s\n", t)
+	// Find all the vertical partial words
+	partials := g.PartialDown()
+	if len(partials) > 0 {
+		//fmt.Printf("PartialDown: %s\n", partials)
 		return false
 	}
 
-	t = g.PartialRight()
+	// And the horizontal ones
+	t := g.PartialRight()
 	if len(t) > 0 {
 		//fmt.Printf("PartialRight: %s\n", t)
 		return false
