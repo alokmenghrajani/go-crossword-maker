@@ -2,6 +2,7 @@ package generate
 
 import (
 	"../grid"
+	. "../utils"
 	"../words"
 	"fmt"
 )
@@ -23,78 +24,121 @@ func Generate(words *words.Words, grid *grid.Grid) {
 
 // Checks that all the partial words can be solved.
 // Returns a map of partial -> how many permutations are valid.
-func phaseTwoValidateDown(words *words.Words, g *grid.Grid) (map[grid.Partial]int, bool) {
-	r := make(map[grid.Partial]int)
+func phaseTwoValidateDown(w *words.Words, g *grid.Grid) (map[grid.Partial][]words.Ngram, bool) {
+	r := make(map[grid.Partial][]words.Ngram)
 
 	// For each partial word, count how many words we can still place
 	for _, partial := range g.PartialDown() {
-		count := 0
-		ngrams := words.GetNgrams(partial.Partial)
+		r[partial] = []words.Ngram{}
+		ngrams := w.GetNgrams(partial.Partial)
 		for _, ngram := range ngrams {
-			if words.IsUsed(ngram.Word) {
+			if w.IsUsed(ngram.Word) {
 				continue
 			}
 			// try to place ngram.word at partial.x, partial.y - ngram.offset
-			sb, eb, ok := g.Place(partial.X, partial.Y - ngram.Offset, grid.DOWN, ngram.Word)
+			sb, eb, ok := g.Place(partial.X, partial.Y-ngram.Offset, grid.DOWN, ngram.Word)
 			if ok {
-				count++
-				g.Unplace(partial.X, partial.Y - ngram.Offset, grid.DOWN, ngram.Word, sb, eb)
+				r[partial] = append(r[partial], ngram)
+				g.Unplace(partial.X, partial.Y-ngram.Offset, grid.DOWN, ngram.Word, sb, eb)
 			}
 		}
-		r[partial] = count
-    if count == 0 {
-      return r, false
-    }
+		if len(r[partial]) == 0 {
+			return r, false
+		}
 	}
 	return r, true
 }
 
-func phaseTwoValidateRight(words *words.Words, g *grid.Grid) (map[grid.Partial]int, bool) {
-	r := make(map[grid.Partial]int)
+func phaseTwoValidateRight(w *words.Words, g *grid.Grid) (map[grid.Partial][]words.Ngram, bool) {
+	r := make(map[grid.Partial][]words.Ngram)
 
 	// For each partial word, count how many words we can still place
 	for _, partial := range g.PartialRight() {
-		count := 0
-		ngrams := words.GetNgrams(partial.Partial)
+		r[partial] = []words.Ngram{}
+		ngrams := w.GetNgrams(partial.Partial)
 		for _, ngram := range ngrams {
-			if words.IsUsed(ngram.Word) {
+			if w.IsUsed(ngram.Word) {
 				continue
 			}
 			// try to place ngram.word at partial.x - ngram.offset, partial.y
-			sb, eb, ok := g.Place(partial.X - ngram.Offset, partial.Y, grid.RIGHT, ngram.Word)
+			sb, eb, ok := g.Place(partial.X-ngram.Offset, partial.Y, grid.RIGHT, ngram.Word)
 			if ok {
-				count++
-				g.Unplace(partial.X - ngram.Offset, partial.Y, grid.RIGHT, ngram.Word, sb, eb)
+				r[partial] = append(r[partial], ngram)
+				g.Unplace(partial.X-ngram.Offset, partial.Y, grid.RIGHT, ngram.Word, sb, eb)
 			}
 		}
-		r[partial] = count
-    if count == 0 {
-      return r, false
-    }
+		if len(r[partial]) == 0 {
+			return r, false
+		}
 	}
 	return r, true
 }
 
-func phaseTwo(words *words.Words, g *grid.Grid, score int) bool {
-	// Find all the vertical partial words
-	partials := g.PartialDown()
-	if len(partials) > 0 {
-		//fmt.Printf("PartialDown: %s\n", partials)
+func phaseTwo(w *words.Words, g *grid.Grid, score int) bool {
+	partialDown, valid := phaseTwoValidateDown(w, g)
+	if !valid {
+		return false
+	}
+	partialRight, valid := phaseTwoValidateRight(w, g)
+	if !valid {
 		return false
 	}
 
-	// And the horizontal ones
-	t := g.PartialRight()
-	if len(t) > 0 {
-		//fmt.Printf("PartialRight: %s\n", t)
-		return false
+	// Resolve the first partial with a count of 1.
+	for partial, ngrams := range partialDown {
+		if len(ngrams) == 1 {
+			sb, eb, ok := g.Place(partial.X, partial.Y-ngrams[0].Offset, grid.DOWN, ngrams[0].Word)
+			PanicIfFalse(ok, "partialDown contains invalid data")
+			w.MarkUsed(ngrams[0].Word)
+			valid := phaseTwo(w, g, score)
+			g.Unplace(partial.X, partial.Y-ngrams[0].Offset, grid.DOWN, ngrams[0].Word, sb, eb)
+			w.MarkUnused(ngrams[0].Word)
+			return valid
+		}
+	}
+	for partial, ngrams := range partialRight {
+		if len(ngrams) == 1 {
+			sb, eb, ok := g.Place(partial.X-ngrams[0].Offset, partial.Y, grid.RIGHT, ngrams[0].Word)
+			PanicIfFalse(ok, "partialRight contains invalid data")
+			w.MarkUsed(ngrams[0].Word)
+			valid := phaseTwo(w, g, score)
+			g.Unplace(partial.X-ngrams[0].Offset, partial.Y, grid.RIGHT, ngrams[0].Word, sb, eb)
+			w.MarkUnused(ngrams[0].Word)
+			return valid
+		}
 	}
 
-	// grid is in good state!
+	// Iterate over first partial
+	for partial, ngrams := range partialDown {
+		valid := false
+		for _, ngram := range ngrams {
+			sb, eb, ok := g.Place(partial.X, partial.Y-ngram.Offset, grid.DOWN, ngram.Word)
+			PanicIfFalse(ok, "partialDown contains invalid data")
+			w.MarkUsed(ngram.Word)
+			valid = valid || phaseTwo(w, g, score)
+			g.Unplace(partial.X, partial.Y-ngram.Offset, grid.DOWN, ngram.Word, sb, eb)
+			w.MarkUnused(ngram.Word)
+		}
+		return valid
+	}
+	for partial, ngrams := range partialRight {
+		valid := false
+		for _, ngram := range ngrams {
+			sb, eb, ok := g.Place(partial.X-ngram.Offset, partial.Y, grid.RIGHT, ngram.Word)
+			PanicIfFalse(ok, "partialRight contains invalid data")
+			w.MarkUsed(ngram.Word)
+			valid = valid || phaseTwo(w, g, score)
+			g.Unplace(partial.X-ngram.Offset, partial.Y, grid.RIGHT, ngram.Word, sb, eb)
+			w.MarkUnused(ngram.Word)
+		}
+		return valid
+	}
+
+	// We don't have any partials, grid is in good state!
 	fmt.Printf("score: %d\n", score)
 	fmt.Println(g)
 
-	return phaseOne(words, g, score)
+	return phaseOne(w, g, score)
 }
 
 func phaseOne(words *words.Words, g *grid.Grid, score int) bool {
