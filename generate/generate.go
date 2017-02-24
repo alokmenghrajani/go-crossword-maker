@@ -22,7 +22,8 @@ func Generate(words *words.Words, grid *grid.Grid) {
 }
 
 // Checks that all the partial words can be solved.
-func phaseTwoValidateDown(words *words.Words, g *grid.Grid) map[grid.Partial]int {
+// Returns a map of partial -> how many permutations are valid.
+func phaseTwoValidateDown(words *words.Words, g *grid.Grid) (map[grid.Partial]int, bool) {
 	r := make(map[grid.Partial]int)
 
 	// For each partial word, count how many words we can still place
@@ -34,15 +35,44 @@ func phaseTwoValidateDown(words *words.Words, g *grid.Grid) map[grid.Partial]int
 				continue
 			}
 			// try to place ngram.word at partial.x, partial.y - ngram.offset
-			sb, eb, ok := g.Place(partial.X, partial.Y-ngram.Offset, grid.DOWN, ngram.Word)
+			sb, eb, ok := g.Place(partial.X, partial.Y - ngram.Offset, grid.DOWN, ngram.Word)
 			if ok {
 				count++
-				g.Unplace(partial.X, partial.Y-ngram.Offset, grid.DOWN, ngram.Word, sb, eb)
+				g.Unplace(partial.X, partial.Y - ngram.Offset, grid.DOWN, ngram.Word, sb, eb)
 			}
 		}
 		r[partial] = count
+    if count == 0 {
+      return r, false
+    }
 	}
-	return r
+	return r, true
+}
+
+func phaseTwoValidateRight(words *words.Words, g *grid.Grid) (map[grid.Partial]int, bool) {
+	r := make(map[grid.Partial]int)
+
+	// For each partial word, count how many words we can still place
+	for _, partial := range g.PartialRight() {
+		count := 0
+		ngrams := words.GetNgrams(partial.Partial)
+		for _, ngram := range ngrams {
+			if words.IsUsed(ngram.Word) {
+				continue
+			}
+			// try to place ngram.word at partial.x - ngram.offset, partial.y
+			sb, eb, ok := g.Place(partial.X - ngram.Offset, partial.Y, grid.RIGHT, ngram.Word)
+			if ok {
+				count++
+				g.Unplace(partial.X - ngram.Offset, partial.Y, grid.RIGHT, ngram.Word, sb, eb)
+			}
+		}
+		r[partial] = count
+    if count == 0 {
+      return r, false
+    }
+	}
+	return r, true
 }
 
 func phaseTwo(words *words.Words, g *grid.Grid, score int) bool {
